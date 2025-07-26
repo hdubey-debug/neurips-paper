@@ -1,0 +1,32 @@
+\section{Introduction}
+
+Recent advancements in Large Video Language Models (LVLMs) have significantly advanced automated video understanding, enabling the generation of detailed, long-form narratives from complex video content \cite{he2024ma, chen2024far, achiam2023gpt, cheng2024videollama, ataallah2024goldfish, li2024llava, liu2024st, zhang2023video, lin2023video, ye2024mplug, yao2024minicpm}. This capability is essential for applications demanding nuanced interpretation, including autonomous and assistive technologies. However, effectively evaluating if these models genuinely comprehend a video's narrative—events, entities, and interactions—remains challenging.
+
+Current evaluation often relies on isolated fact-based question-answering tasks \cite{zhou2024mlvu, tapaswi2016movieqa, wang2024lvbench, ataallah2024goldfish, fu2024video,li2024llava, nagrani2024neptune, li2024mvbench, rawal2024cinepile, ataallah2024infinibench, wu2024longvideobench, tan2025allvb}, which inadequately assess holistic comprehension. Traditional n-gram metrics (BLEU, METEOR, CIDEr, ROUGE, SPICE) \cite{papineni2002bleu, banerjee2005meteor, vedantam2015cider, lin2004rouge, anderson2016spice} suffer from the "many-to-one mapping" problem, penalizing stylistic and semantic variations by relying on lexical overlap, and inadequately evaluating narrative chronology. Though consensus-based solutions address the many-to-one mapping issue, generating extensive diverse references for long videos is prohibitively labor-intensive and impractical.
+
+Embedding-based metrics (e.g., BERTScore \cite{zhang2019bertscore}) improve semantic awareness but struggle with context limitations and structural complexity in evaluating lengthy narratives. Recent LLM-driven methods \cite{wang2024tarsier, dubey2025leveraging, maaz2023video} offer semantic nuance but depend heavily on LLM accuracy and suffer from consistency and transparency issues. Critically, these methods often inadequately assess narrative structure and chronology.
+
+Comprehensively scoring dense video narratives involves several interconnected challenges: (1) Many-to-one mapping, exacerbated by practical limitations in generating extensive human annotations. (2) Reconciling strict versus lenient content alignment—allowing valid descriptive variability, such as different event granularities or descriptive styles, while penalizing core distortions. (3) Balancing local chronology tolerance (flexibility in concurrent events or minor reordering) with intolerance (strict ordering of critical sequences). (4) Integrating global and local narrative assessments to detect significant structural misorderings despite locally correct segments, and vice versa.
+
+This paper introduces the Video Comprehension Score (VCS), a novel metric addressing these complexities by evaluating dense, long-form video descriptions semantically and structurally. VCS employs Segment Any Text (\SaT) \cite{frohmann2024segment} for semantic segmentation and $\nvEmbed$ \cite{lee2024nv} for chunk-level embeddings, comprising three components:
+
+\begin{enumerate}
+\item Global Alignment Score (GAS): Measures overall thematic similarity using full-text embeddings.
+\item Local Alignment Score (LAS): Assesses fine-grained semantic correspondence between chunks.
+\item Narrative Alignment Score (NAS): Evaluates chronological consistency, using a configurable LOCAL CHRONOLOGY Tolerance factor (LCT) to balance descriptive flexibility and strict narrative order.
+\end{enumerate}
+
+We combine GAS and LAS into a Semantic Alignment Score (SAS), representing semantic alignment across long paragraphs. Integrating SAS with NAS yields the comprehensive VCS metric, enabling clear assessment of narrative equivalence and comprehension between model-generated and human-written descriptions.
+
+Additionally, we generalized VCS to $\VCSshort$, applying the same principles at varying segment lengths, demonstrating its versatility for shorter captions.
+
+Due to the absence of suitable annotated datasets for long-form dense descriptions—where human judgment becomes increasingly unreliable—we constructed a large-scale synthetic dataset (1390 descriptions, ~500 words each, from MPII via ChatGPT) \cite{rohrbach2015dataset, achiam2023gpt}. Two test sets, a Comparison Test Set (27,800 description pairs with diverse valid/invalid variations) and a Multiple-Author Test Set (5560 variants from four LLMs), comprehensively evaluate VCS performance.
+
+Benchmarked against traditional and adapted segment-based metrics (BLEU-S, METEOR-S, ROUGE-L-S), VCS consistently demonstrated robustness to valid narrative variability and sensitivity to invalid alterations. On VATEX-EVAL \cite{shi2022emscore}, $\VCSshort$ achieved state-of-the-art results in the 9-reference setting and was a close second in the 1-reference setting \cite{sarto2023positive}.
+
+The results affirm VCS as a reliable metric capable of accurately assessing narrative equivalence across diverse descriptive styles and lengths, configurable for varying chronological rigor. In summary, our primary contributions include:
+
+\begin{itemize}
+\item A versatile, robust metric (VCS) for evaluating dense and diverse video descriptions across varying lengths and styles.
+\item A configurable approach to balance semantic and chronological evaluation, adaptable to multiple applications.
+\end{itemize}

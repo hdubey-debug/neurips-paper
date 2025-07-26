@@ -1,0 +1,16 @@
+\section{Experiments}
+We conduct experiments to validate Video Comprehension Score (VCS) on large-scale synthetic datasets designed specifically to evaluate robustness in assessing long-form video descriptions. Our evaluation targets three core challenges: the many-to-one mapping problem, chronological accuracy (local and global), and precise content alignment.
+
+We construct the synthetic dataset from the MPII Movie Description (MPII-MD) dataset \cite{rohrbach2015dataset}, consisting of detailed audio descriptions temporally aligned with movie scenes. From MPII-MD's 94 movies, scene-level descriptions are aggregated into coherent narratives via ChatGPT-4o \cite{achiam2023gpt}, generating 1,390 baseline descriptions averaging 500 words each.
+
+To test robustness, we systematically produce two types of description variants using ChatGPT-4o \cite{achiam2023gpt}:
+
+\textbf{Valid variants (12,510 total)} include lexical/syntactic paraphrases (synonym substitutions, active/passive voice transformations), descriptive length and detail variations (brevity: \textasciitilde70\%, \textasciitilde50\%; verbosity: \textasciitilde120\%, \textasciitilde130\%), granularity transformations (macro-to-micro, micro-to-macro actions), and attribute/emotion/scene enrichments.\\
+\textbf{Invalid variants} introduce deliberate errors in content alignment (redundant content, unrelated additions, content deletion, semantic corruption, complete incoherence, lossy summarization) and chronology (paragraph rotation, complete reversal, sentence shuffling, neighboring sentence swaps).
+
+
+Additionally, to simulate realistic multi-author variability, we generated a "Multiple-Author Test Set" by prompting four distinct LLMs (ChatGPT-4o, Grok, Mistral, Claude) to independently rewrite each baseline scene description (yielding 5,560 descriptions). These models were instructed to preserve original narrative events and chronology but were free to introduce various valid stylistic transformations.
+
+We benchmark VCS against established metrics, including traditional n-gram-based measures (BLEU-1/4 \cite{papineni2002bleu}, ROUGE \cite{lin2004rouge} variants and METEOR \cite{banerjee2005meteor}) and novel segment-based semantic adaptations using SaT segmentation \cite{frohmann2024segment} and nv-embed-v2 \cite{lee2024nv} embeddings (Segment-BLEU, Segment-METEOR, Segment-ROUGE-L). Segment matching was established via cosine similarity thresholding (0.75).
+
+For shorter descriptions, we evaluated VCS\textsubscript{short} on VATEX-EVAL \cite{shi2022emscore}, correlating metric scores with human judgments (Kendall's $\tau_b$, Spearman's $\rho$) under single and multiple reference scenarios. We compared VCS\textsubscript{short} to standard n-gram metrics (BLEU \cite{papineni2002bleu}, ROUGE \cite{lin2004rouge}, METEOR \cite{banerjee2005meteor}, CIDEr \cite{vedantam2015cider}) and embedding-based metrics (BERTScore \cite{zhang2019bertscore}, BERTScore++ \cite{yi2020improving}), alongside multimodal embedding metrics (EMScore \cite{shi2022emscore}, PAC-S/RefPAC-S \cite{sarto2023positive}).
